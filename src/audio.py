@@ -1,41 +1,49 @@
 import multiprocessing
-from playsound import playsound
+import playsound
 import time
 
-# MP3 파일 이름 리스트
-text = [
-    "start",
-    "finish",
-    "pause",
-    "resume",
-    "parking",
-    "forward",
-    "backward",
-    "speed",
-    "stop_"
-] + [f"num_{num}" for num in range(10)]
+# MP3 플레이어 클래스
+class Musicplayer():
+    _audio_list = [
+        "start",
+        "finish",
+        "pause",
+        "resume",
+        "parking",
+        "forward",
+        "backward",
+        "speed",
+        "stop_",
+        "playing"
+    ] + [f"num_{num}" for num in range(10)]
 
-# 오디오 파일 재생 함수
-def play_audio(file_name):
-    try:
-        playsound(f'./audios/{file_name}.mp3')
-    except Exception as e:
-        print(f"Error occurred while playing {file_name}.mp3: {e}")
+    def __init__(self):
+        self.__process = None
+
+    def play(self, sound, blocking=True, terminate=True):
+        if sound not in self._audio_list:
+            raise ValueError(f"Invalid sound: {sound}")
+        
+        if self.is_playing():
+            if not blocking:
+                self.__process.join()
+            if terminate:
+                self.__process.terminate()
+        
+        self.__process = multiprocessing.Process(target=playsound.playsound, args=(f'./audios/{sound}.mp3',))
+        self.__process.start()
+    
+    def is_playing(self, playsound=False):
+        if playsound: self.play("playing")
+        return self.__process.is_alive() if self.__process is not None else False
+    
+    def get_audio_list(self):
+        return self._audio_list
 
 if __name__ == "__main__":
     processes = []
     
-    for t in text:
-        # 새로운 프로세스를 시작
-        p = multiprocessing.Process(target=play_audio, args=(t,))
-        processes.append(p)
-        p.start()
-        
-        # 0.2초 동안 프로세스 실행 후 중단
-        time.sleep(0.5)
-        
-        if p.is_alive():
-            p.terminate()  # 프로세스 중단
-            p.join()  # 종료될 때까지 대기
-
-    print("All audio files have been processed.")
+    musicplayer = Musicplayer()
+    for sound in musicplayer.get_audio_list():
+        musicplayer.play(sound)
+        time.sleep(0.7)
