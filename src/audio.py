@@ -37,6 +37,10 @@ class Musicplayer():
         if playsound: self.play("playing")
         return self.__process.is_alive() if self.__process is not None else False
     
+    def stop(self, playsound=False):
+        if playsound: self.play("stop_")
+        if self.is_playing(): self.__process.terminate()
+    
     def get_audio_list(self):
         return self._audio_list
 
