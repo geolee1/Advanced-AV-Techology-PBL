@@ -24,21 +24,22 @@ class Musicplayer():
         self.__loop_process = None
         self._now_playing = False
 
-    def play(self, sound, blocking=True, terminate=True):
+    def play(self, sound, terminate=True, blocking=True):
         if sound not in self._audio_list:
             raise ValueError(f"Invalid sound: {sound}")
         
         if self.is_playing():
-            if not blocking:
-                self.__process.join()
             if terminate:
                 self.__process.terminate()
+            elif blocking:
+                self.__process.join()
         
-        self.__process = multiprocessing.Process(target=self.__playsound, args=(f'./audios/{sound}.mp3',))
+        self.__process = multiprocessing.Process(target=self._playsound, args=(sound,))
         self.__process.start()
         self._now_playing = True
+        print(f"[MusicPlayer] Playing {sound}...")
 
-    def __playsound(self, sound):
+    def _playsound(self, sound):
         playsound.playsound(f'./audios/{sound}.mp3')
         self._now_playing = False
     
@@ -79,11 +80,11 @@ class Musicplayer():
     def _loop(self, sound, n):
         if n == 0:
             while True:
-                self.play(sound, blocking=False)
+                self.play(sound, terminate=False)
                 time.sleep(0.5)
         else:
             for _ in range(n):
-                self.play(sound, blocking=False)
+                self.play(sound, terminate=False)
                 time.sleep(0.5)
     
     def stoploop(self):
@@ -93,10 +94,38 @@ class Musicplayer():
 
 if __name__ == "__main__":
     
-    musicplayer = Musicplayer()
+    m = Musicplayer()
 
-    musicplayer.playloop("car moving", 2)
-    musicplayer.playloop("start", 5, blocking=False)
+    m.play("start")
+    m.play("car moving", terminate=False)
+    # d.driveForward(50,3)
+    time.sleep(3)
+
+    m.play("now parking")
+    # d.driveBackward(50, 1, -1)
+    time.sleep(1)
+    # d.driveBackward(50, 0.8, 0)
+    time.sleep(0.8)
+    # d.driveBackward(50, 0.8, 1)
+    time.sleep(0.8)
+    m.play("complete parking")
+
     time.sleep(5)
-    musicplayer.stoploop()
-    musicplayer.playloop("finish")
+
+    m.play("leave parking")
+    m.play("car moving", terminate=False)
+    # d.driveForward(50, 0.8, 1)
+    time.sleep(0.8)
+    # d.driveForward(50, 0.8, 0)
+    time.sleep(0.8)
+    # d.driveForward(50, 1, -1)
+    time.sleep(1)
+    m.play("complete leaving")
+
+    time.sleep(5)
+
+    m.play("car moving", terminate=False)
+    # d.driveForward(50,3.5)
+    time.sleep(3.5)
+    m.play("car stop")
+    m.play("finish", terminate=False)
