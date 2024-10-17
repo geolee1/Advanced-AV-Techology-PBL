@@ -4,6 +4,10 @@ import time
 
 # MP3 플레이어 클래스
 class Musicplayer():
+    __process = None
+    __loop_process = None
+
+    _now_playing = False
     _audio_list = [
         "start",
         "car moving",
@@ -18,6 +22,7 @@ class Musicplayer():
     def __init__(self):
         self.__process = None
         self.__loop_process = None
+        self._now_playing = False
 
     def play(self, sound, blocking=True, terminate=True):
         if sound not in self._audio_list:
@@ -29,11 +34,16 @@ class Musicplayer():
             if terminate:
                 self.__process.terminate()
         
-        self.__process = multiprocessing.Process(target=playsound.playsound, args=(f'./audios/{sound}.mp3',))
+        self.__process = multiprocessing.Process(target=self.__playsound, args=(f'./audios/{sound}.mp3',))
         self.__process.start()
+        self._now_playing = True
+
+    def __playsound(self, sound):
+        playsound.playsound(f'./audios/{sound}.mp3')
+        self._now_playing = False
     
     def is_playing(self, playsound=False):
-        if (self.__process.is_alive() if self.__process is not None else False):
+        if (self.__process.is_alive() if self.__process is not None else False) or self._now_playing:
             if playsound: self.play("playing")
             return True
         return False
