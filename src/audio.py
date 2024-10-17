@@ -25,6 +25,14 @@ class Musicplayer():
         self.__loop_process = None
         self._now_playing = False
 
+    def wait_finish(self):
+        if not self.is_playing():
+            return
+        print("[MusicPlayer] Waiting for the end of the music...")
+        if self.__process is not None:
+            self.__process.join()
+        print("[MusicPlayer] Music end.")
+
     def play(self, sound, terminate=True, blocking=True):
         if sound not in self._audio_list:
             raise ValueError(f"Invalid sound: {sound}")
@@ -105,10 +113,12 @@ if __name__ == "__main__":
 
     m.play("start")
     m.play("car moving", terminate=False)
+    m.wait_finish()
     # d.driveForward(50,3)
     time.sleep(3)
 
     m.play("now parking")
+    m.wait_finish()
     # m.playloop("beep effect", terminate=False)
     # d.driveBackward(50, 1, -1)
     time.sleep(1)
@@ -117,11 +127,13 @@ if __name__ == "__main__":
     # d.driveBackward(50, 0.8, 1)
     time.sleep(0.8)
     m.play("complete parking")
+    m.wait_finish()
 
-    time.sleep(5)
+    time.sleep(1)
 
     m.play("leave parking")
     m.play("car moving", terminate=False)
+    m.wait_finish()
     # d.driveForward(50, 0.8, 1)
     time.sleep(0.8)
     # d.driveForward(50, 0.8, 0)
@@ -129,11 +141,14 @@ if __name__ == "__main__":
     # d.driveForward(50, 1, -1)
     time.sleep(1)
     m.play("complete leaving")
+    m.wait_finish()
 
-    time.sleep(5)
+    time.sleep(1)
 
     m.play("car moving", terminate=False)
+    m.wait_finish()
     # d.driveForward(50,3.5)
     time.sleep(3.5)
     m.play("car stop")
     m.play("finish", terminate=False)
+    m.wait_finish()
