@@ -1,4 +1,5 @@
 import time
+import multiprocessing
 from pop import Pilot
 
 class Driver:
@@ -16,48 +17,48 @@ class Driver:
         self.__current_command = None  # 현재 명령어를 기억하는 변수
         self.__remaining_time = 0  # 남은 시간
 
-    def setSteering(self, angle):
-        print("setSteering")
+    def _setSteering(self, angle):
+        print(f"[Driver] Set steering to {angle}.")
         self.Car.steering = angle
 
-    def goForward(self, speed, angle=__centerAngle):
-        print("goForward")
-        self.setSteering(angle)
+    def _goForward(self, speed, angle=__centerAngle):
+        print(f"[Driver] Go forward speed {speed} to {angle}.")
+        self._setSteering(angle)
         self.Car.forward(speed)
 
-    def goBackward(self, speed, angle=__centerAngle):
-        print("goBackward")
-        self.setSteering(angle)
+    def _goBackward(self, speed, angle=__centerAngle):
+        print(f"[Driver] Go backward speed {speed} to {angle}.")
+        self._setSteering(angle)
         self.Car.backward(speed)
 
-    def stop(self):
-        print("stop")
+    def _stop(self):
+        print("[Driver] Car stoped.")
         self.Car.stop()
-        self.setSteering(self.__centerAngle)
+        self._setSteering(self.__centerAngle)
 
     def driveForward(self, speed, t, angle=__centerAngle):
-        self.goForward(speed, angle)
+        self._goForward(speed, angle)
         time.sleep(t)
-        self.stop()
+        self._stop()
 
     def driveBackward(self, speed, t, angle=__centerAngle):
-        self.goBackward(speed, angle)
+        self._goBackward(speed, angle)
         time.sleep(t)
-        self.stop()
+        self._stop()
 
     def input_listener(self):
         while self.__running:
             command = input("명령어를 입력하세요 (stop/resume/exit): ").strip().lower()
             if command == 'stop':
                 self.__paused = True
-                self.stop()
+                self._stop()
                 print("주행이 중지되었습니다.")
             elif command == 'resume':
                 self.__paused = False
                 print(f"주행을 재개합니다: {self.__current_command}, 남은 시간: {self.__remaining_time:.1f}초")
             elif command == 'exit':
                 self.__running = False
-                self.stop()
+                self._stop()
                 print("프로그램을 종료합니다.")
                 break
 
