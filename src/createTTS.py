@@ -6,18 +6,17 @@ if not os.path.exists("audios"):
     os.makedirs("audios")
 
 # MP3 파일 이름 리스트
-# text = [
-#     "start",
-#     "finish",
-#     "pause",
-#     "resume",
-#     "parking",
-#     "forward",
-#     "backward",
-#     "speed",
-#     "stop_"
-# ] + [f"num_{num}" for num in range(10)]
-text = ["playing"]
+
+text = [
+    "start",
+    "car moving",
+    "now parking",
+    "complete parking",
+    "leave parking",
+    "complete leaving",
+    "car stop",
+    "finish",
+]
 
 # 텍스트를 음성으로 변환
 for x in text:

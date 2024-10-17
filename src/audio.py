@@ -6,16 +6,14 @@ import time
 class Musicplayer():
     _audio_list = [
         "start",
+        "car moving",
+        "now parking",
+        "complete parking",
+        "leave parking",
+        "complete leaving",
+        "car stop",
         "finish",
-        "pause",
-        "resume",
-        "parking",
-        "forward",
-        "backward",
-        "speed",
-        "stop_",
-        "playing"
-    ] + [f"num_{num}" for num in range(10)]
+    ]
 
     def __init__(self):
         self.__process = None
