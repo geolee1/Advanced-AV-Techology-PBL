@@ -1,65 +1,70 @@
-"""driver.py"""
-'''1. 출발(직진후 정지)
-   2. 주차시작
-   3. 후방 평행주차
-   4. 주차완료(대기)
-   5. 출차시작
-   6. 출차완료(대기)
-   7. 주행시작
-   8. 주행완료(정지)'''
 import time
 from pop import Pilot
 
-Car = Pilot.AutoCar()
-centerAngle = 0
+class Driver:
+    __centerAngle = 0
+    __running = True
+    __paused = False
+    __current_command = None  # 현재 명령어를 기억하는 변수
+    __remaining_time = 0  # 남은 시간
 
-''' power 16.2
-    left-1 <= steering <= 1
-    forward(20<=speed<=99)
-    backward(20<=speed<=99)'''
+    def __init__(self):
+        self.Car = Pilot.AutoCar()
+        self.__centerAngle = 0
+        self.__running = True
+        self.__paused = False
+        self.__current_command = None  # 현재 명령어를 기억하는 변수
+        self.__remaining_time = 0  # 남은 시간
 
-def setSteering(angle):
-    print("setSteering")
-    Car.steering = angle
+    def setSteering(self, angle):
+        print("setSteering")
+        self.Car.steering = angle
 
-def goForward(speed, angle = centerAngle):
-    print("goForward")
-    setSteering(angle)
-    Car.forward(speed)
+    def goForward(self, speed, angle=__centerAngle):
+        print("goForward")
+        self.setSteering(angle)
+        self.Car.forward(speed)
 
-def goBackward(speed, angle = centerAngle):
-    print("goBackward")
-    setSteering(angle)
-    Car.backward(speed)
+    def goBackward(self, speed, angle=__centerAngle):
+        print("goBackward")
+        self.setSteering(angle)
+        self.Car.backward(speed)
 
-def stop():
-    print("stop")
-    Car.stop()
-    setSteering(centerAngle)
+    def stop(self):
+        print("stop")
+        self.Car.stop()
+        self.setSteering(self.__centerAngle)
 
-def driveForward(speed, t, angle=centerAngle):
-    goForward(speed, angle)
-    time.sleep(t)
-    stop()
+    def driveForward(self, speed, t, angle=__centerAngle):
+        self.goForward(speed, angle)
+        time.sleep(t)
+        self.stop()
 
-def driveBackward(speed, t, angle=centerAngle):
-    goBackward(speed, angle)
-    time.sleep(t)
-    stop()
+    def driveBackward(self, speed, t, angle=__centerAngle):
+        self.goBackward(speed, angle)
+        time.sleep(t)
+        self.stop()
 
+    def input_listener(self):
+        while self.__running:
+            command = input("명령어를 입력하세요 (stop/resume/exit): ").strip().lower()
+            if command == 'stop':
+                self.__paused = True
+                self.stop()
+                print("주행이 중지되었습니다.")
+            elif command == 'resume':
+                self.__paused = False
+                print(f"주행을 재개합니다: {self.__current_command}, 남은 시간: {self.__remaining_time:.1f}초")
+            elif command == 'exit':
+                self.__running = False
+                self.stop()
+                print("프로그램을 종료합니다.")
+                break
+
+# main test code
 def main():
-    driveForward(50,3)
+    pass
+    
 
-    driveBackward(50, 1, -1)
-    driveBackward(50, 0.8, 0)
-    driveBackward(50, 0.8, 1)
-
-    driveForward(50, 0.8, 1)
-    driveForward(50, 0.8, 0)
-    driveForward(50, 1, -1)
-
-    driveForward(50,3.5)
-    return
-
-if __name__ == "__main__":
+if __name__=="__main__":
     main()
