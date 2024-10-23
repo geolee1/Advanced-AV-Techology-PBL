@@ -12,11 +12,12 @@ def main(*argv, **kwargv):
     m = audio.Musicplayer()
 
     m.play("start")
-    m.play("car moving", blocking=False)
+    m.play("car moving", terminate=False)
     m.wait_finish()
     d.driveForward(50,3)
 
     m.play("now parking")
+    m.play("beep effect", repeat=100, terminate=False)
     m.wait_finish()
     d.driveBackward(50, 1, -1)
     d.driveBackward(50, 0.8, 0)
@@ -27,7 +28,7 @@ def main(*argv, **kwargv):
     time.sleep(1)
 
     m.play("leave parking")
-    m.play("car moving", blocking=False)
+    m.play("car moving", terminate=False)
     m.wait_finish()
     d.driveForward(50, 0.8, 1)
     d.driveForward(50, 0.8, 0)
@@ -37,11 +38,11 @@ def main(*argv, **kwargv):
 
     time.sleep(1)
 
-    m.play("car moving", blocking=False)
+    m.play("car moving", terminate=False)
     m.wait_finish()
     d.driveForward(50,3.5)
     m.play("car stop")
-    m.play("finish", blocking=False)
+    m.play("finish", terminate=False)
     m.wait_finish()
     
     return
