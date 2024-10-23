@@ -1,11 +1,12 @@
 import multiprocessing
+import threading
 import playsound
 import time
 
 # MP3 플레이어 클래스
 class Musicplayer():
     __process = None
-    __loop_process = None
+    __loop_thread = None
 
     _now_playing = False
     _audio_list = [
@@ -22,7 +23,7 @@ class Musicplayer():
 
     def __init__(self):
         self.__process = None
-        self.__loop_process = None
+        self.__loop_thread = None
         self._now_playing = False
 
     def wait_finish(self):
@@ -33,23 +34,26 @@ class Musicplayer():
             self.__process.join()
         print("[MusicPlayer] Music end.")
 
-    def play(self, sound, terminate=True, blocking=True):
+    def play(self, sound, repeat=1, terminate=True):
         if sound not in self._audio_list:
             raise ValueError(f"Invalid sound: {sound}")
         
         if self.is_playing():
             if terminate:
                 self.__process.terminate()
-            elif blocking:
+            else:
                 self.__process.join()
-        
-        self.__process = multiprocessing.Process(target=self._playsound, args=(sound,))
+
+        self.__process = multiprocessing.Process(target=self._playsound, args=(sound, repeat))
         self.__process.start()
         self._now_playing = True
         print(f"[MusicPlayer] Playing {sound}...")
 
-    def _playsound(self, sound):
-        playsound.playsound(f'./audios/{sound}.mp3')
+    def _playsound(self, sound, repeat):
+        self.__loop = True
+        for _ in range(repeat):
+            if not self.__loop: break
+            playsound.playsound(f'./audios/{sound}.mp3')
         self._now_playing = False
     
     def is_playing(self, playsound=False):
@@ -61,49 +65,13 @@ class Musicplayer():
     def stop(self, playsound=False):
         if playsound: self.play("stop_")
         if self.is_playing(): self.__process.terminate()
+        self._now_playing = False
     
     def get_audio_list(self):
         return self._audio_list
     
-    def playloop(self, sound, n=0 , blocking=True, terminate=True):
-        if n < 0:
-            raise ValueError(f"Invalid n: {n}")
-        
-        if sound not in self._audio_list:
-            raise ValueError(f"Invalid sound: {sound}")
-        
-        if self.is_playing():
-            if terminate:
-                self.__process.terminate()
-            elif blocking:
-                self.__process.join()
-
-        if self.is_looping():
-            if terminate:
-                self.__loop_process.terminate()
-            elif blocking:
-                self.__loop_process.join()
-        
-        self.__loop_process = multiprocessing.Process(target=self._playloop, args=(sound, n))
-        self.__loop_process.start()
-
-    def is_looping(self):
-        if (self.__loop_process.is_alive() if self.__loop_process is not None else False):
-            return True
-        return False
-
-    def _playloop(self, sound, n):
-        if n == 0:
-            while True:
-                self.play(sound, terminate=False)
-                time.sleep(0.5)
-        else:
-            for _ in range(n):
-                self.play(sound, terminate=False)
-                time.sleep(0.5)
-    
     def stoploop(self):
-        self.__loop_process.terminate()
+        self.__loop = False
         self.stop()
         
 
@@ -119,13 +87,15 @@ if __name__ == "__main__":
 
     m.play("now parking")
     m.wait_finish()
-    # m.playloop("beep effect", terminate=False)
+    m.play("beep effect", repeat=100, terminate=False)
+    time.sleep(10)
     # d.driveBackward(50, 1, -1)
     time.sleep(1)
     # d.driveBackward(50, 0.8, 0)
     time.sleep(0.8)
     # d.driveBackward(50, 0.8, 1)
     time.sleep(0.8)
+    m.stoploop()
     m.play("complete parking")
     m.wait_finish()
 
