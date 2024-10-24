@@ -17,16 +17,16 @@ def main(*argv, **kwargv):
     m.play("start")
     m.play("car moving", terminate=False)
     m.wait_finish()
-    d.add_command(50, 3, 0, 'forward')   
+    d.add_command(50, 1.75, 0, 'forward') 
     d.execute_commands()
  
 
     m.play("now parking")
     m.play("beep effect", repeat=100, terminate=False)
-    m.wait_finish()
-    d.add_command(50, 1, -1, 'backward')
-    d.add_command(50, 0.8, 0, 'backward')
-    d.add_command(50, 0.8, 1, 'backward')
+    d.add_command(50, 0.6, -1, 'backward')
+    d.add_command(50, 0.15, 0, 'backward')
+    d.add_command(50, 0.6, 1, 'backward')
+    d.add_command(50, 0.1, 0, 'backward')
     d.execute_commands()
     m.play("complete parking")
     m.wait_finish()
@@ -36,9 +36,10 @@ def main(*argv, **kwargv):
     m.play("leave parking")
     m.play("car moving", terminate=False)
     m.wait_finish()
-    d.add_command(50, 0.8, 1, 'forward')
-    d.add_command(50, 0.8, 0, 'forward')
-    d.add_command(50, 1, -1, 'forward')
+    d.add_command(50, 0.45, 1, 'forward')
+    d.add_command(50, 0.2, 0, 'forward')
+    d.add_command(50, 0.5, -1, 'forward')
+    d.add_command(50, 0.1, 0, 'forward')
     d.execute_commands()
     m.play("complete leaving")
     m.wait_finish()
@@ -47,7 +48,7 @@ def main(*argv, **kwargv):
 
     m.play("car moving", terminate=False)
     m.wait_finish()
-    d.add_command(50, 3.5, 0, 'forward')
+    d.add_command(50, 1.8, 0, 'forward')
     d.execute_commands()
     m.play("car stop")
     m.play("finish", terminate=False)
@@ -58,4 +59,4 @@ def main(*argv, **kwargv):
     return
 
 if __name__ == '__main__':
-    main(*sys.argv[1:])
+    main(*sys.argv[1:]) 

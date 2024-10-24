@@ -32,7 +32,7 @@ class Driver:
     def _stop(self):
         print("[Driver] Car stopped.")
         self.Car.stop()
-        self._setSteering(self.__centerAngle)
+        # self._setSteering(self.__centerAngle)
 
     def add_command(self, speed, duration, angle=__centerAngle, direction='forward'):
         """주행 명령을 리스트에 추가."""
@@ -105,8 +105,8 @@ class Driver:
             elif command == 'r':
                 self.resume()
             elif command == 'e':
-                self.__running = False
                 self._stop()
+                self.__running = False
                 print("프로그램을 종료합니다.")
                 break
 
@@ -116,20 +116,24 @@ def main():
 
 
     # 주행 명령을 추가
-    driver.add_command(50, 3, 0, 'forward')   
+    driver.add_command(50, 1.8, 0, 'forward')   
     driver.execute_commands()
  
-    driver.add_command(50, 1, -1, 'backward')
-    driver.add_command(50, 0.8, 0, 'backward')
-    driver.add_command(50, 0.8, 1, 'backward')
+    driver.add_command(50, 0.6, -1, 'backward')
+    driver.add_command(50, 0.15, 0, 'backward')
+    driver.add_command(50, 0.6, 1, 'backward')
     driver.execute_commands()
 
-    driver.add_command(50, 0.8, 1, 'forward')
-    driver.add_command(50, 0.8, 0, 'forward')
-    driver.add_command(50, 1, -1, 'forward')
+    time.sleep(1)
+
+    driver.add_command(50, 0.5, 1, 'forward')
+    driver.add_command(50, 0.15, 0, 'forward')
+    driver.add_command(50, 0.6, -1, 'forward')
     driver.execute_commands()
 
-    driver.add_command(50, 3.5, 0, 'forward')
+    time.sleep(1)
+
+    driver.add_command(50, 1.8, 0, 'forward')
     driver.execute_commands()
 
     driver.input_thread.join()
