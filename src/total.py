@@ -9,7 +9,7 @@ import time
 
 def main(*argv, **kwargv):
     m = audio.Musicplayer()
-    d = d.Driver()
+    d = driver.Driver()
     d.input_thread.start()
 
 
