@@ -1,14 +1,13 @@
 import multiprocessing
-import threading
 import playsound
 import time
 
 # MP3 플레이어 클래스
 class Musicplayer():
     __process = None
-    __loop_thread = None
-
     _now_playing = False
+    __loop = False
+
     _audio_list = [
         "start",
         "car moving",
@@ -22,9 +21,7 @@ class Musicplayer():
     ]
 
     def __init__(self):
-        self.__process = None
-        self.__loop_thread = None
-        self._now_playing = False
+        pass
 
     def wait_finish(self):
         if not self.is_playing():
@@ -40,7 +37,10 @@ class Musicplayer():
         
         if self.is_playing():
             if terminate:
-                self.__process.terminate()
+                if self.__loop: 
+                    self.stoploop()
+                else: 
+                    self.stop()
             else:
                 self.__process.join()
 
