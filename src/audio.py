@@ -5,8 +5,8 @@ import time
 # MP3 플레이어 클래스
 class Musicplayer():
     __process = None
-    _now_playing = False
-    __loop = False
+    __is_playing = False
+    __is_looping = False
 
     _audio_list = [
         "start",
@@ -37,7 +37,7 @@ class Musicplayer():
         
         if self.is_playing():
             if terminate:
-                if self.__loop: 
+                if self.__is_looping: 
                     self.stoploop()
                 else: 
                     self.stop()
@@ -46,18 +46,18 @@ class Musicplayer():
 
         self.__process = multiprocessing.Process(target=self._playsound, args=(sound, repeat))
         self.__process.start()
-        self._now_playing = True
+        self.__is_playing = True
         print(f"[MusicPlayer] Playing {sound}...")
 
     def _playsound(self, sound, repeat):
-        self.__loop = True
+        self.__is_looping = True
         for _ in range(repeat):
-            if not self.__loop: break
+            if not self.__is_looping: break
             playsound.playsound(f'./audios/{sound}.mp3')
-        self._now_playing = False
+        self.__is_playing = False
     
     def is_playing(self, playsound=False):
-        if (self.__process.is_alive() if self.__process is not None else False) or self._now_playing:
+        if (self.__process.is_alive() if self.__process is not None else False) or self.__is_playing:
             if playsound: self.play("playing")
             return True
         return False
@@ -65,13 +65,13 @@ class Musicplayer():
     def stop(self, playsound=False):
         if playsound: self.play("stop_")
         if self.is_playing(): self.__process.terminate()
-        self._now_playing = False
+        self.__is_playing = False
     
     def get_audio_list(self):
         return self._audio_list
     
     def stoploop(self):
-        self.__loop = False
+        self.__is_looping = False
         self.stop()
         
 
